@@ -72,7 +72,6 @@ public class QRLoginServiceImpl implements QRLoginService {
         if (!sessionStore.containsKey(sessionId) || !sessionStore.get(sessionId).equals("PENDING")) {
             return Map.of("status", "INVALID");
         }
-
         // Tìm người dùng theo id thay vì username
         Optional<User> userOptional = userRepository.findById(new ObjectId(username)); // assuming username is the ObjectId in this case
 

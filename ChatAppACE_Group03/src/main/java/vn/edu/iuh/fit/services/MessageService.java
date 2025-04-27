@@ -15,4 +15,7 @@ public interface MessageService {
     Message deleteMessageForUser(ObjectId messageId, ObjectId userId);
 
     Message getMessageById(ObjectId messageId);
+
+    Message pinMessage(ObjectId messageId, ObjectId userId, ObjectId conversationId);
+    Message unpinMessage(ObjectId messageId, ObjectId userId, ObjectId conversationId);
 }

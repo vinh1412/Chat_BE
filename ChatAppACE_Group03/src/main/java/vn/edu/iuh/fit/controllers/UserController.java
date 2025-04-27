@@ -201,4 +201,22 @@ public class UserController {
                             .build());
         }
     }
+
+
+    @GetMapping("/me/{token}")
+    public ResponseEntity<ApiResponse<?>> getCurrentUserToken(@PathVariable("token") String token) {
+        try {
+            UserResponse response = userService.getCurrentUser(token);
+
+            simpMessagingTemplate.convertAndSend("/user/profile/" + response.getId(), response);
+
+            return ResponseEntity.ok(ApiResponse.builder().status("SUCCESS").message("Get current user").response(response).build());
+        } catch (Exception e) {
+            return ResponseEntity.ok(
+                    ApiResponse.builder()
+                            .status("FAILED")
+                            .message(e.getMessage())
+                            .build());
+        }
+    }
 }

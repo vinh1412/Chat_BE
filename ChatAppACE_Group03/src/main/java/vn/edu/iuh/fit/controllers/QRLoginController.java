@@ -32,4 +32,6 @@ public class QRLoginController {
     public ResponseEntity<Map<String, String>> checkStatus(@PathVariable String sessionId) {
         return ResponseEntity.ok(qrLoginService.checkStatus(sessionId));
     }
+
+
 }

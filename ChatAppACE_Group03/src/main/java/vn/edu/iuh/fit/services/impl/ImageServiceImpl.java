@@ -9,7 +9,7 @@ package vn.edu.iuh.fit.services.impl;/*
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.edu.iuh.fit.dtos.request.ImageRequest;
+import vn.edu.iuh.fit.dtos.request.FileRequest;
 import vn.edu.iuh.fit.entities.File;
 import vn.edu.iuh.fit.repositories.ImageRerpository;
 import vn.edu.iuh.fit.services.ImageService;
@@ -41,25 +41,25 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
-    public void saveImage(ImageRequest imageRequest) {
+    public void saveImage(FileRequest FIleRequest) {
         try {
-            if (imageRequest.getFileUrl() == null || imageRequest.getFileName() == null) {
+            if (FIleRequest.getFileUrl() == null || FIleRequest.getFileName() == null) {
                 throw new IllegalArgumentException("File URL or File Name cannot be null");
             }
 
-//            ObjectId senderId = new ObjectId(imageRequest.getSender());
-//            ObjectId receiverId = new ObjectId(imageRequest.getReceiver());
+//            ObjectId senderId = new ObjectId(FileRequest.getSender());
+//            ObjectId receiverId = new ObjectId(FileRequest.getReceiver());
 
             File.FileBuilder fileBuilder = File.builder()
                     .id(new ObjectId())
 //                    .sender(senderId)
 //                    .receiver(receiverId)
-                    .fileName(imageRequest.getFileName())
-                    .fileType(imageRequest.getFileType())
-                    .fileUrl(imageRequest.getFileUrl())
-                    .uploadedAt(imageRequest.getUploadedAt());
-            if (imageRequest.getMessageId() != null && !imageRequest.getMessageId().isEmpty()) {
-                fileBuilder.messageId(new ObjectId(imageRequest.getMessageId()));
+                    .fileName(FIleRequest.getFileName())
+                    .fileType(FIleRequest.getFileType())
+                    .fileUrl(FIleRequest.getFileUrl())
+                    .uploadedAt(FIleRequest.getUploadedAt());
+            if (FIleRequest.getMessageId() != null && !FIleRequest.getMessageId().isEmpty()) {
+                fileBuilder.messageId(new ObjectId(FIleRequest.getMessageId()));
             }
 
             imageRrpository.save(fileBuilder.build());

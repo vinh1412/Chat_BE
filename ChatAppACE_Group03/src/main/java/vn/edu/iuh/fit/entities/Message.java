@@ -73,5 +73,7 @@ public class Message {
     @JsonDeserialize(using = ObjectIdSetDeserializer.class)
     private Set<ObjectId> deletedByUserIds; // Danh sách người dùng đã xóa tin nhắn này
 
+    private boolean pinned;
+
 }
 

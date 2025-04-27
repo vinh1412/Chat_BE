@@ -76,6 +76,9 @@ public class SecurityConfig {
             "/api/v1/auth/reset-password-mobile",
             "/api/v1/user/check-phone",
             "/ws/**",
+            "/api/v1/qacode/**",
+            "/api/v1/qacode",
+            "/api/v1/user/me/**",
 
     };
 

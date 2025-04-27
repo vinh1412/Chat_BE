@@ -8,9 +8,11 @@ package vn.edu.iuh.fit.services;
 
 import org.bson.types.ObjectId;
 import vn.edu.iuh.fit.dtos.ConversationDTO;
+import vn.edu.iuh.fit.dtos.response.MemberResponse;
 import vn.edu.iuh.fit.entities.Message;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /*
@@ -33,4 +35,29 @@ public interface ConversationService {
     // Hàm tìm hoặc tạo cuộc trò chuyện giữa người gửi và người nhận. Nếu chưa có cuộc trò chuyện, tạo mới.
     ConversationDTO findOrCreateConversation(ObjectId senderId, String receiverId);
     ConversationDTO findConversationByMembers(ObjectId senderId, ObjectId receiverId);
+
+
+    void addPinnedMessage(ObjectId conversationId, ObjectId messageId);
+    void removePinnedMessage(ObjectId conversationId, ObjectId messageId);
+    boolean isMember(ObjectId conversationId, ObjectId userId);
+
+    Map<String, Object> dissolveGroup(ObjectId conversationId, ObjectId userId);
+    public Message leaveGroup(ObjectId conversationId, String token);
+    public Message removeGroup(ObjectId conversationId, String token, ObjectId userId);
+    public Message addMemberGroup(ObjectId conversationId, ObjectId userId);
+    public List<MemberResponse> findUserByIDConversation(ObjectId conversationId);
+
+    //Haàm cập nhật role thành viên trong nhóm
+    ConversationDTO updateMemberRole(ObjectId conversationId, ObjectId memberId, String newRole, ObjectId requestingUserId);
+
+    ConversationDTO deleteConversationForUser(ObjectId conversationId, ObjectId userId);
+
+    // UPDATE TÊN NHÓM
+    ConversationDTO updateGroupName(ObjectId conversationId, String newGroupName);
+
+    //  tìm linkGroup theo ConversationId
+    String findLinkGroupByConversationId(ObjectId conversationId);
+
+    //tim conversationId theo linkGroup
+    ConversationDTO findConversationIdByLinkGroup(String linkGroup);
 }

@@ -21,6 +21,7 @@ import java.util.List;
 public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
+    private final ConversationServiceImpl conversationService;
 
     // Phương thức kiểm tra ObjectId hợp lệ
     private boolean isValidObjectId(String str) {
@@ -74,17 +75,20 @@ public class MessageServiceImpl implements MessageService {
         }
 
         MessageType messageType = MessageType.valueOf(request.getMessageType());
+        System.out.println("MessageType: " + messageType);
 
         // Kiểm tra URL hợp lệ cho GIF/STICKER
-        if (messageType == MessageType.GIF || messageType == MessageType.STICKER) {
-            if (request.getFileUrl() == null || request.getFileUrl().isEmpty()) {
-                throw new IllegalArgumentException("File URL cannot be empty for GIF/STICKER messages");
-            }
-            // Pass both the URL and the MessageType to the isValidUrl method
-            if (!isValidUrl(request.getFileUrl(), messageType)) {
-                throw new IllegalArgumentException("Invalid file URL for GIF/STICKER");
-            }
-        }
+//        if (messageType == MessageType.GIF || messageType == MessageType.STICKER || messageType == MessageType.EMOJI || messageType == MessageType.IMAGE || messageType == MessageType.FILE || messageType == MessageType.VIDEO) {
+//            if (request.getFileUrl() == null || request.getFileUrl().isEmpty()) {
+//                throw new IllegalArgumentException("File URL cannot be empty for GIF/STICKER messages");
+//            }
+//            // Pass both the URL and the MessageType to the isValidUrl method
+//            if (!isValidUrl(request.getFileUrl(), messageType)) {
+//                throw new IllegalArgumentException("Invalid file URL for GIF/STICKER");
+//            }
+//        }
+        System.out.println("reques send: " + request);
+
         Message message = Message.builder()
                 .senderId(new ObjectId(request.getSenderId()))
                 .conversationId(new ObjectId(request.getConversationId()))
@@ -94,19 +98,19 @@ public class MessageServiceImpl implements MessageService {
                 .recalled(false)
                 .build();
 
+        System.out.println("Message before save: " + message);
+
         // Xử lý nội dung dựa trên loại tin nhắn
         switch (messageType) {
             case TEXT:
                 message.setContent(request.getContent());
                 break;
-            case GIF:
+            case GIF, IMAGE, STICKER, FILE, VIDEO:
                 message.setFileUrl(request.getFileUrl());
+                message.setContent(request.getContent());
                 break;
             case EMOJI:
                 message.setContent(request.getContent());
-                message.setFileUrl(request.getFileUrl());
-                break;
-            case STICKER:
                 message.setFileUrl(request.getFileUrl());
                 break;
             default:
@@ -132,6 +136,8 @@ public class MessageServiceImpl implements MessageService {
                 return url.startsWith("https://media"); // Chỉ chấp nhận GIF từ GIPHY
             } else if (messageType == MessageType.STICKER) {
                 return url.startsWith("https://your-cdn.com/"); // Chỉ chấp nhận sticker từ CDN của bạn
+            } else if (messageType == MessageType.VIDEO) {
+                return url.endsWith(".mp4") || url.endsWith(".avi") || url.endsWith(".mkv"); // Chỉ chấp nhận video với các định dạng này
             }
             return false;
         } catch (Exception e) {
@@ -171,6 +177,13 @@ public class MessageServiceImpl implements MessageService {
         if (!message.isRecalled()) {
             message.setRecalled(true);
             message.setContent("Tin nhắn đã được thu hồi.");
+
+            if (message.getMessageType() == MessageType.GIF || message.getMessageType() == MessageType.STICKER ||
+                    message.getMessageType() == MessageType.EMOJI || message.getMessageType() == MessageType.IMAGE ||
+                    message.getMessageType() == MessageType.FILE) {
+                message.setFileUrl(null); // Xóa URL nếu là GIF hoặc STICKER
+                message.setMessageType(MessageType.TEXT); // Đặt lại loại tin nhắn thành TEXT
+            }
 
             return messageRepository.save(message);
         }
@@ -220,6 +233,53 @@ public class MessageServiceImpl implements MessageService {
             System.err.println("Invalid messageId format: " + messageId);
             return null;
         }
+    }
+
+    @Override
+    public Message pinMessage(ObjectId messageId, ObjectId userId, ObjectId conversationId) {
+        // Kiểm tra tính hợp lệ của messageId và conversationId
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new IllegalArgumentException("Message not found"));
+
+        // Kiểm tra xem message có thuộc về conversation không
+        if (!message.getConversationId().equals(conversationId)) {
+            throw new IllegalArgumentException("Message does not belong to this conversation");
+        }
+
+        // Kiểm tra xem message đã được ghim chưa
+        if (!conversationService.isMember(conversationId, userId)) {
+            throw new IllegalArgumentException("User is not a member of this conversation");
+        }
+
+        // Pin the message
+        message.setPinned(true);
+        messageRepository.save(message);
+
+        // Thêm messageId vào danh sách pinnedMessages của conversation
+        conversationService.addPinnedMessage(conversationId, messageId);
+
+        return message;
+    }
+
+    @Override
+    public Message unpinMessage(ObjectId messageId, ObjectId userId, ObjectId conversationId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new IllegalArgumentException("Message not found"));
+
+        if (!message.getConversationId().equals(conversationId)) {
+            throw new IllegalArgumentException("Message does not belong to this conversation");
+        }
+
+        if (!conversationService.isMember(conversationId, userId)) {
+            throw new IllegalArgumentException("User is not a member of this conversation");
+        }
+
+        message.setPinned(false);
+        messageRepository.save(message);
+
+        conversationService.removePinnedMessage(conversationId, messageId);
+
+        return message;
     }
 
 }

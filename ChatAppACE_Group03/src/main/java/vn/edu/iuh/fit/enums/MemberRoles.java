@@ -14,6 +14,7 @@ package vn.edu.iuh.fit.enums;
 public enum MemberRoles
 {
     ADMIN("ADMIN"),
+    DEPUTY("DEPUTY"),
     MEMBER("MEMBER");
 
     private String role;

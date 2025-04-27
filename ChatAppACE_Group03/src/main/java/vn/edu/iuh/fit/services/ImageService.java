@@ -6,8 +6,7 @@ package vn.edu.iuh.fit.services;/*
  * @nameProject: Project_Architectural_Software
  */
 
-import vn.edu.iuh.fit.dtos.request.ImageRequest;
-import vn.edu.iuh.fit.entities.File;
+import vn.edu.iuh.fit.dtos.request.FileRequest;
 
 public interface ImageService {
 
@@ -20,5 +19,5 @@ public interface ImageService {
     boolean updateImage(String token, String imageId, String newImagePath);
 
 
-     void saveImage(ImageRequest imageRequest);
+     void saveImage(FileRequest FIleRequest);
 }

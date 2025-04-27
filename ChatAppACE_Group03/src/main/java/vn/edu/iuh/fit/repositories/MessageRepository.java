@@ -29,4 +29,6 @@ public interface MessageRepository extends MongoRepository<Message, ObjectId> {
 
     @Query("{ '_id': { $in: ?0 } }")
     List<Message> findByIdIn(Set<ObjectId> ids);
+
+    void deleteAllByConversationId(ObjectId conversationId);
 }

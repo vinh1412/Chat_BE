@@ -13,6 +13,7 @@ import vn.edu.iuh.fit.entities.File;
 import vn.edu.iuh.fit.entities.Member;
 
 import java.util.List;
+import java.util.Optional;
 
 /*
  * @description:
@@ -24,4 +25,11 @@ import java.util.List;
 public interface MemberRepository extends MongoRepository<Member, ObjectId> {
     List<Member> findByUserId(ObjectId userId);
     List<Member> findByConversationId(ObjectId conversationId);
+    Member findByUserIdAndConversationId(ObjectId userId, ObjectId conversationId);
+    void deleteByUserIdAndConversationId(ObjectId userId, ObjectId conversationId);
+    List<Member> findAllByConversationId(ObjectId conversationId);
+
+    Optional<Member> findByConversationIdAndUserId(ObjectId conversationId, ObjectId userId);
+
+    void deleteByConversationIdAndUserId(ObjectId conversationId, ObjectId userId);
 }

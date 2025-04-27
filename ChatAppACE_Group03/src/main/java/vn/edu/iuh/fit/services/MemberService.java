@@ -8,6 +8,7 @@ package vn.edu.iuh.fit.services;
 
 import org.bson.types.ObjectId;
 import vn.edu.iuh.fit.entities.Member;
+import vn.edu.iuh.fit.enums.MemberRoles;
 
 import java.util.List;
 
@@ -24,4 +25,5 @@ public interface MemberService {
     void deleteByConversationId(ObjectId conversationId);
     boolean existsByConversationIdAndUserId(ObjectId conversationId, ObjectId userId);
     List<Member> findByConversationId(ObjectId conversationId);
+    MemberRoles getUserRoleInConversation(ObjectId userId, ObjectId conversationId);
 }

@@ -196,4 +196,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                                 .build()
                 );
     }
+
+    @ExceptionHandler(ConversationNotFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleConversationNotFoundException(ConversationNotFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(
+                        ApiResponse.builder()
+                                .status("FAILED")
+                                .message(ex.getMessage())
+                                .build()
+                );
+    }
 }

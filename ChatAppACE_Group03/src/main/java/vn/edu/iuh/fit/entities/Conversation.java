@@ -15,7 +15,9 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import vn.edu.iuh.fit.utils.ObjectIdSerializer;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /*
@@ -49,4 +51,15 @@ public class Conversation {
     @JsonSerialize(contentUsing = ObjectIdSerializer.class)
     private Set<ObjectId> messageIds = new HashSet<>();
 
+    private List<ObjectId> pinnedMessages = new ArrayList<>();
+
+    private boolean dissolved;
+    private ObjectId dissolvedBy;
+    private Instant dissolvedAt;
+    private Set<ObjectId> removedByUserIds = new HashSet<>();
+    public Set<ObjectId> getMemberId() {
+        return memberId;
+    }
+
+    private String linkGroup;
 }

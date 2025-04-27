@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.bson.types.ObjectId;
 
 import java.time.Instant;
 
@@ -18,7 +17,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ImageRequest {
+public class FileRequest {
     private String sender;
     private String receiver;
     private String messageId;
